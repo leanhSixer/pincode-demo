@@ -1,11 +1,13 @@
 import * as React from "react";
-import {StyleSheet, Text, View, Button, Alert} from "react-native";
+import {StyleSheet, Text, View, Button, Alert, TouchableOpacity, AlertIOS} from "react-native";
 import PINCode, {
   hasUserSetPinCode,
   resetPinCodeInternalStates,
   deleteUserPinCode,
-  launchTouchID,
 } from "@haskkor/react-native-pincode";
+
+import FingerprintScanner from 'react-native-fingerprint-scanner';
+
 
 class App extends React.Component {
   constructor() {
@@ -14,7 +16,23 @@ class App extends React.Component {
       showPinLock: false,
       PINCodeStatus: "choose",
       isFaceId: false,
+      isUsingSystem: false,
     };
+  }
+
+  facerIdTouchId = () => {
+    FingerprintScanner
+      .authenticate({description: 'Scan your fingerprint on the device scanner to continue'})
+      .then(() => {
+        console.log('success');
+        //this.props.handlePopupDismissed();
+        //AlertIOS.alert('Authenticated successfully');
+      })
+      .catch((error) => {
+        console.log('error ', error);
+        //this.props.handlePopupDismissed();
+        // AlertIOS.alert(error.message);
+      });
   }
 
   _showChoosePinLock = () => {
@@ -69,7 +87,6 @@ class App extends React.Component {
         {
           title: "Ok",
           onPress: () => {
-            // do nothing
           },
         },
       ]);
@@ -77,9 +94,9 @@ class App extends React.Component {
     }
   };
 
-  render() {
+  customPinCode = () => {
     return (
-      <View style={styles.container}>
+      <View>
         {!this.state.showPinLock && (
           <View style={{alignSelf: 'center'}}>
             <View style={styles.button}>
@@ -124,6 +141,35 @@ class App extends React.Component {
             finishProcess={() => this._finishProcess()}
           />
         )}
+      </View>
+    )
+  }
+
+  systemPinCode = () => {
+    return (
+      <TouchableOpacity onPress={() => {
+        this.facerIdTouchId();
+      }}>
+        <Text>Show PinCode</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        {!this.state.isUsingSystem ? this.customPinCode() : this.systemPinCode()}
+
+        <TouchableOpacity
+          style={{marginVertical: 20, }}
+          onPress={() => {
+            this.setState({
+              isUsingSystem: !this.state.isUsingSystem,
+            });
+          }}>
+          {this.state.isUsingSystem ? <Text style={[styles.title, {color: 'red'}]}>Custom PinCode</Text> :
+            <Text style={[styles.title, {color: 'red'}]}>System PinCode</Text>}
+        </TouchableOpacity>
       </View>
     );
   }
