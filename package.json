@@ -18,7 +18,8 @@
     "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-keychain": "^8.0.0",
     "react-native-touch-id": "^4.4.1",
-    "react-native-vector-icons": "^7.1.0"
+    "react-native-vector-icons": "^7.1.0",
+    "rn-local-authentication": "^1.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

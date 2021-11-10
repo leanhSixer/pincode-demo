@@ -7,6 +7,7 @@ import PINCode, {
 } from "@haskkor/react-native-pincode";
 
 import FingerprintScanner from 'react-native-fingerprint-scanner';
+import LocalAuthentication from 'rn-local-authentication';
 
 
 class App extends React.Component {
@@ -18,6 +19,18 @@ class App extends React.Component {
       isFaceId: false,
       isUsingSystem: false,
     };
+  }
+
+  componentDidMount() {
+    LocalAuthentication.authenticateAsync({
+      reason: "Authorize please!"
+    }).then(response => {
+      if (response.success) {
+        console.log('Authorized successfully!');
+      } else {
+        console.log(`Something went wrong. Error: ${response.error}`);
+      }
+    });
   }
 
   facerIdTouchId = () => {
